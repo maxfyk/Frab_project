@@ -1,0 +1,42 @@
+from bs4 import BeautifulSoup
+import requests
+import os
+import wget
+
+
+def download_tiktok(link):
+    opt=1
+    print(link)
+    data = {
+        'url': link
+    }
+
+    response = requests.post(
+        'https://tiktokdownloader.net/download_ajax/', data=data)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    contenturl = None
+    arr = soup.findAll('a', attrs={'rel': 'nofollow noreferrer'})
+    #print(arr)
+    #print(arr[0])
+    contenturl = arr[0]
+    name = str(link).split("/")[-1]
+    return save_video(contenturl, name + ".mp4")
+
+def save_video(link, name):
+    cwd = str(os.getcwd())
+    print(os.name)
+    if os.name != "posix":
+        try:
+            os.mkdir(cwd + "\\Videos")
+        except:
+            pass
+
+        cwd += "\\Videos\\"
+
+        path = cwd + name
+        wget.download(link, path)
+
+    else:
+        wget.download(link, name)
+    return path
