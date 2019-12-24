@@ -1,5 +1,6 @@
 import telebot
 import os
+from img_dwn_insta import dwn_img_insta
 from scripts import download_tiktok
 bot = telebot.TeleBot('1035416381:AAHtMVVnm-oxv3MIJyy1SyRRG9cLhtarpSc')
 
@@ -27,7 +28,18 @@ def send_text(message):
                     os.remove(path)
 
     elif "instagram.com" in message.text:
-        bot.send_message(message.chat.id, 'Got a vaild instagram link!')
+        dt = message.text.split("/")   #ділимо стрічку на масив
+        filename = dt[-2] + ".jpg" #отримуємо назву файла і додаємо розширення
+
+        dt = message.text.split(" ") #ділимо на масив з двох елементів - команда download і link
+        
+        link = dt[-1]  #отримуємо лінк з масиву
+        dwn_img_insta(link, filename) # завантажуємо файл
+        photo = open(filename, 'rb') # відкриваємо файл
+        bot.send_photo(message.chat.id, photo) # відкриваємо файл
+        
+        os.remove(filename) # видаляємо файл
+        
     elif "vk.com" in message.text:
         bot.send_message(message.chat.id, 'Got a vaild Vk link!')
     else:
